@@ -25,7 +25,7 @@ namespace Lab_7
         private readonly string Path = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Parent.FullName +
                                        @"\Contacts";
 
-        public int I = 0;
+        public int I_phone = 0, I_email = 0, I_url = 0;
         private int _pos;
         private List<VCard> contacts;
 
@@ -81,32 +81,32 @@ namespace Lab_7
 
         private void Add_email_Click(object sender, RoutedEventArgs e)
         {
-            Add_template(GEmail, Delete_email, "email_", true);
+            Add_template(GEmail, Delete_email, "email_", true, ref I_email);
         }
 
         private void Delete_email_Click(object sender, RoutedEventArgs e)
         {
-            Delete_template(GEmail, Delete_email, "email_");
+            Delete_template(GEmail, Delete_email, "email_", ref I_email);
         }
 
         private void Add_Url_Click(object sender, RoutedEventArgs e)
         {
-            Add_template(GUrl, Delete_url, "url_", true);
+            Add_template(GUrl, Delete_url, "url_", true, ref I_url);
         }
 
         private void Delete_url_Click(object sender, RoutedEventArgs e)
         {
-            Delete_template(GUrl, Delete_url, "url_");
+            Delete_template(GUrl, Delete_url, "url_", ref I_url);
         }
 
         private void Add_phone_Click(object sender, RoutedEventArgs e)
         {
-            Add_template(GPhone, Delete_phone, "phone_", true);
+            Add_template(GPhone, Delete_phone, "phone_", true, ref I_phone);
         }
 
         private void Delete_phone_Click(object sender, RoutedEventArgs e)
         {
-            Delete_template(GPhone, Delete_phone, "phone_");
+            Delete_template(GPhone, Delete_phone, "phone_", ref I_phone);
         }
 
 
@@ -156,7 +156,7 @@ namespace Lab_7
         }
 
 
-        private void Add_template(Grid grid, Button btn, string name, bool del_btn_show, string content = "")
+        private void Add_template(Grid grid, Button btn, string name, bool del_btn_show, ref int I, string content = "")
         {
             var r = new TextBox
             {
@@ -171,7 +171,7 @@ namespace Lab_7
             grid.Children.Add(r);
         }
 
-        private void Delete_template(Grid grid, Button btn, string name)
+        private void Delete_template(Grid grid, Button btn, string name, ref int I)
         {
             if (grid.Children.Count <= 2) return;
             foreach (UIElement t in grid.Children)
@@ -216,11 +216,11 @@ namespace Lab_7
             BDay.DisplayDate = contact.Birthday;
             foreach (var email in contact.Emails)
             {
-                Add_template(GEmail, Delete_email, "email_", false, email.Address);
+                Add_template(GEmail, Delete_email, "email_", false, ref I_email, email.Address);
             }
             foreach (var url in contact.Urls)
             {
-                Add_template(GEmail, Delete_email, "url_", false, url.Address);
+                Add_template(GEmail, Delete_email, "url_", false, ref I_url, url.Address);
             }
 
         }
