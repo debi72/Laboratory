@@ -35,8 +35,39 @@ namespace laboratory_work
         string _prefix;
         string _suffix;
         string _surname;
+        string _nickname;
         List<Url> _urls = new List<Url>();
 
+        public VCard(string name, string surname, DateTime birthday, string middlename = null, string nickname = null, string prefix = null, string suffix = null, List<PhoneNumber> phones = null, List<EmailAddress> emails = null, List<Url> urls = null, string note = null    )
+        {
+            _givenName = name;
+            _surname = surname;
+            _bday = birthday;
+            _middleName = middlename;
+            _nickname = nickname;
+            _emails = _emails != null ? emails : new List<EmailAddress>();
+            _urls = _urls != null ? urls : new List<Url>();
+            _phones = _phones != null ? phones : new List<PhoneNumber>();
+            _suffix = suffix;
+            _prefix = prefix;
+            _note = note;
+
+        }
+
+        public VCard()
+        {
+            _givenName = null;
+            _surname = null;
+            _bday = DateTime.MinValue;
+            _middleName = null;
+            _nickname = null;
+            _emails = new List<EmailAddress>();
+            _urls = new List<Url>();
+            _phones = new List<PhoneNumber>();
+            _suffix = null;
+            _prefix = null;
+            _note = null;
+        }
         public void Add_email(EmailAddress x)
         {
            _emails.Add(x);    
@@ -56,7 +87,7 @@ namespace laboratory_work
         public string FormattedName
         {
             get { return _formattedName; }
-            set { _formattedName = value.TrimEnd(_lineBreak); }
+            set { _formattedName = value.Trim(_lineBreak); }
         }
 
         public string Mailer { get; set; }
@@ -64,34 +95,38 @@ namespace laboratory_work
         public string Surname
         {
             get { return _surname; }
-            set { _surname = value.TrimEnd(_lineBreak); }
+            set { _surname = value.Trim(_lineBreak); }
          
         }
 
-        public string Nickname { get; set; }
+        public string Nickname
+        {
+            get { return _nickname; }
+            set { _nickname = value.Trim(_lineBreak); }
+        }
 
         public string GivenName
         {
             get { return _givenName; }
-            set { _givenName = value.TrimEnd(_lineBreak); }
+            set { _givenName = value.Trim(_lineBreak); }
         }
 
         public string MiddleName
         {
             get { return _middleName; }
-            set { _middleName = value.TrimEnd(_lineBreak); }
+            set { _middleName = value.Trim(_lineBreak); }
         }
 
         public string Prefix
         {
             get { return _prefix; }
-            set { _prefix = value.TrimEnd(_lineBreak); }
+            set { _prefix = value.Trim(_lineBreak); }
         }
 
         public string Suffix
         {
             get { return _suffix; }
-            set { _suffix = value.TrimEnd(_lineBreak); }
+            set { _suffix = value.Trim(_lineBreak); }
         }
 
         public DateTime Birthday
@@ -104,22 +139,23 @@ namespace laboratory_work
         public string Note
         {
             get { return _note; }
-            set { _note = value.TrimEnd(_lineBreak); }
+            set { _note = value.Trim(_lineBreak); }
         }
 
-        public IEnumerable<PhoneNumber> Phones
-        {
-            get { return _phones; }
-        }
 
-        public IEnumerable<EmailAddress> Emails
+        public List<EmailAddress> Emails
         {
             get { return _emails; }
         }
 
-        public IEnumerable<Url> Urls
+        public List<Url> Urls
         {
             get { return _urls; }
+        }
+
+        public List<PhoneNumber> Phones
+        {
+            get { return _phones; }
         }
         // regular expression to parse format *.vcf
         private const string RegxLine =

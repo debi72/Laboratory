@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using laboratory_work;
-using Button = System.Windows.Controls.Button;
-using HorizontalAlignment = System.Windows.HorizontalAlignment;
-using KeyEventArgs = System.Windows.Input.KeyEventArgs;
-using MessageBox = System.Windows.MessageBox;
-using TextBox = System.Windows.Controls.TextBox;
+//using Button = System.Windows.Controls.Button;
+//using HorizontalAlignment = System.Windows.HorizontalAlignment;
+//using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+//using MessageBox = System.Windows.MessageBox;
+//using TextBox = System.Windows.Controls.TextBox;
 
 namespace Lab_7
 {
@@ -19,10 +19,10 @@ namespace Lab_7
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const Visibility Hide = Visibility.Hidden;
-        private const Visibility Show = Visibility.Visible;
+        private new const Visibility Hide = Visibility.Hidden;
+        private new const Visibility Show = Visibility.Visible;
 
-        private readonly string Path = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Parent.FullName +
+        private readonly string _path = new DirectoryInfo(Environment.CurrentDirectory).Parent.Parent.Parent.FullName +
                                        @"\Contacts";
 
         public int I_phone = 0, I_email = 0, I_url = 0;
@@ -33,9 +33,9 @@ namespace Lab_7
         {
             InitializeComponent();
             HideAll();
-            if (Directory.Exists(Path))
+            if (Directory.Exists(_path))
             {
-                contacts = VCardManager.LoadVCards(Path);
+                contacts = VCardManager.LoadVCards(_path);
                 foreach (var t in contacts)
                 {
                     Contacts.Items.Add(t.FormattedName);
@@ -44,7 +44,7 @@ namespace Lab_7
             else
             {
                 MessageBox.Show("Directory is not exists", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                Directory.CreateDirectory(Path);
+                Directory.CreateDirectory(_path);
             }
         }
 
@@ -54,6 +54,7 @@ namespace Lab_7
             Info.Visibility = Show;
             _pos = Contacts.SelectedIndex;
             StateAll(false);
+            Fill(contacts[_pos]);
         }
 
         private void DeleteBtn_Click(object sender, RoutedEventArgs e)
@@ -62,6 +63,34 @@ namespace Lab_7
 
         private void SavebBtn_Click(object sender, RoutedEventArgs e)
         {
+            var phones = GetList<PhoneNumber>(GPhone);
+            var emails = GetList<EmailAddress>(GEmail);
+            var urls = GetList<Url>(GUrl);
+            var newContact = new VCard(Name.Text, Surname.Text, BDay.DisplayDate, MiddleName.Text, NickName.Text, Prefix.Text, Suffix.Text, phones, emails, urls, Note.Text);
+            contacts.Add(newContact);
+            try
+            {
+                VCardManager.SaveVCards(contacts, _path);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.Message, "An error occured", MessageBoxButton.OK, MessageBoxImage.Error);
+                Environment.Exit(0);
+            }
+            HideAll();
+            if (Directory.Exists(_path))
+            {
+                contacts = VCardManager.LoadVCards(_path);
+                foreach (var t in contacts)
+                {
+                    Contacts.Items.Add(t.FormattedName);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Directory is not exists", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Directory.CreateDirectory(_path);
+            }
         }
 
         private void EditBtn_Click(object sender, RoutedEventArgs e)
@@ -75,6 +104,7 @@ namespace Lab_7
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             ShowAll();
+            StateAll(true);
             Add_buttons(Show);
             Init();
         }
@@ -112,13 +142,14 @@ namespace Lab_7
 
         private void StateAll(bool state)
         {
-            Name.IsEnabled = state;
-            Surname.IsEnabled = state;
-            MiddleName.IsEnabled = state;
-            Prefix.IsEnabled = state;
-            Suffix.IsEnabled = state;
+            Name.Focusable = state;
+            Surname.Focusable = state;
+            MiddleName.Focusable = state;
+            Prefix.Focusable = state;
+            Suffix.Focusable = state;
+            BDay.Focusable = false;
             BDay.IsEnabled = state;
-            Note.IsEnabled = state;
+            Note.Focusable = state;
             TxtBoxes(GEmail, state);
             TxtBoxes(GPhone, state);
             TxtBoxes(GUrl, state);
@@ -147,16 +178,45 @@ namespace Lab_7
                 try
                 {
                     var txt = (TextBox) elem;
-                    txt.IsEnabled = hide;
+                    txt.Focusable = hide;
                 }
                 catch (Exception)
                 {
+                    continue;
                 }
             }
         }
 
+        private List<T> GetList<T>(Grid grid)
+        {
+            var ans = new List<T>();
+            foreach (UIElement elem in grid.Children)
+            {
+                try
+                {
+                    var txt = (TextBox)elem;
+                    if (typeof(T) == typeof (EmailAddress))
+                    {
+                        (ans as List<EmailAddress>).Add(new EmailAddress(){Address = txt.Text});
+                    }
+                    if (typeof(T) == typeof(PhoneNumber))
+                    {
+                        (ans as List<PhoneNumber>).Add(new PhoneNumber(){Number = txt.Text});
+                    }
+                    if (typeof(T) == typeof(Url))
+                    {
+                        (ans as List<Url>).Add(new Url() { Address = txt.Text });
+                    }
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
+            return ans;
+        }
 
-        private void Add_template(Grid grid, Button btn, string name, bool del_btn_show, ref int I, string content = "")
+        private void Add_template(Grid grid, Button btn, string name, bool delBtnShow, ref int I, string content = "")
         {
             var r = new TextBox
             {
@@ -166,7 +226,7 @@ namespace Lab_7
                 VerticalAlignment = VerticalAlignment.Top,
                 HorizontalAlignment = HorizontalAlignment.Stretch
             };
-            if (del_btn_show) btn.Visibility = Show;
+            if (delBtnShow) btn.Visibility = Show;
             ++I;
             grid.Children.Add(r);
         }
@@ -214,28 +274,38 @@ namespace Lab_7
             MiddleName.Text = contact.MiddleName;
             NickName.Text = contact.Nickname;
             BDay.DisplayDate = contact.Birthday;
-            foreach (var email in contact.Emails)
-            {
-                Add_template(GEmail, Delete_email, "email_", false, ref I_email, email.Address);
-            }
-            foreach (var url in contact.Urls)
-            {
-                Add_template(GEmail, Delete_email, "url_", false, ref I_url, url.Address);
-            }
-
+            BDay.Text = contact.Birthday.ToShortDateString();
+            if (contact.Emails.Count != 0)
+                foreach (var email in contact.Emails)
+                {
+                    Add_template(GEmail, Delete_email, "email_", false, ref I_email, email.Address);
+                }
+            if (contact.Urls.Count != 0)
+                foreach (var url in contact.Urls)
+                {
+                    Add_template(GEmail, Delete_email, "url_", false, ref I_url, url.Address);
+                }
+            if (contact.Urls.Count != 0) 
+                foreach (var phone in contact.Phones)
+                {
+                    Add_template(GPhone, Delete_phone, "phone_", false, ref I_phone, phone.Number);
+                }
         }
 
         private void Init()
         {
             Name.Text = "";
             Surname.Text = "";
+            MiddleName.Text = "";
+            Prefix.Text = "";
+            Suffix.Text = "";
+            BDay.DisplayDate = DateTime.Now;
+            Note.Text = "";
+            while (GPhone.Children.Count > 0) Delete_template(GPhone, Delete_phone, "phone_", ref I_phone);
+            while (GEmail.Children.Count > 0) Delete_template(GEmail, Delete_email, "email_", ref I_email);
+            while (GUrl.Children.Count > 0) Delete_template(GUrl, Delete_url, "url_", ref I_url);
             Contacts.SelectedIndex = -1;
             BDay.Text = DateTime.Now.ToShortDateString();
-        }
-
-        private void BDay_PreviewKeyUp(object sender, KeyEventArgs e)
-        {
-            e.Handled = false;
         }
     }
 }

@@ -23,18 +23,19 @@ namespace laboratory_work
 
         public static void SaveVCards(List<VCard> vCards, string path)
         {
-            try
-            {
+           // try
+           // {
                 foreach (var contact in Directory.GetFiles(path))
                     File.Delete(contact);
 
                 for (var i = 0; i < vCards.Count; ++i)
-                    File.WriteAllText(path + "/Contact_" + i + ".vcf", vCards[i].ToString(), Encoding.UTF8);
-            }
-            catch (Exception)
-            {
-               throw new Exception("An error occured writing information to files");
-            }
+                    File.WriteAllText(Path.Combine(path, "Contact_" + i + ".vcf"), vCards[i].ToString(), Encoding.UTF8);
+           // }
+           // catch (Exception)
+           // {
+           //    throw new Exception("Unable to save contacts");
+               //throw new Exception(eee.Message);
+           // }
         }
     }
 }

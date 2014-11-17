@@ -3,20 +3,20 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Name="Form" x:Class="Lab_7.MainWindow"
 		Title="Laboratory work" VerticalAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Auto" FontSize="14" HorizontalAlignment="Center">
-    <Grid Margin="0">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <Button x:Name="SavebBtn" Content="Save" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,236,10" VerticalAlignment="Bottom" FontSize="20" Click="SavebBtn_Click"/>
-        <Button x:Name="Add" Content="New" HorizontalAlignment="Right" Margin="0,0,5,10" VerticalAlignment="Bottom" Padding="1,1,6,1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20" Grid.ColumnSpan="2"
+	<Grid Margin="0">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition/>
+			<ColumnDefinition/>
+		</Grid.ColumnDefinitions>
+		<Button x:Name="SavebBtn" Content="Save" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,236,10" VerticalAlignment="Bottom" FontSize="20" Click="SavebBtn_Click"/>
+		<Button x:Name="Add" Content="New" HorizontalAlignment="Right" Margin="0,0,5,10" VerticalAlignment="Bottom" Padding="1,1,6,1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="20" Grid.ColumnSpan="2"
 			Grid.Column="0" Width="60" Click="Add_Click"/>
-        <Button x:Name="EditBtn" Content="Edit" HorizontalAlignment="Right" Margin="0,0,75,10" VerticalAlignment="Bottom" FontSize="20" Grid.Column="1" Width="60" Click="EditBtn_Click"/>
-        <ListBox x:Name="Contacts" Margin="5,63,0,10" BorderThickness="0" Grid.Column="0" MouseDoubleClick="Contacts_Click"/>
-        <Button x:Name="DeleteBtn" Content="Delete" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,148,10" VerticalAlignment="Bottom" Width="74" FontSize="20" Click="DeleteBtn_Click"/>
-        <Label Grid.Column="0" Content="Список контактов:" Margin="5,8,0,0" VerticalAlignment="Top" FontSize="36" FontWeight="Bold" FontFamily="Monotype Corsiva"/>
-        <ScrollViewer x:Name="Info" Grid.Column="1" Margin="0,5,5,50" Focusable="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
-            <StackPanel>
+		<Button x:Name="EditBtn" Content="Edit" HorizontalAlignment="Right" Margin="0,0,75,10" VerticalAlignment="Bottom" FontSize="20" Grid.Column="1" Width="60" Click="EditBtn_Click"/>
+		<ListBox x:Name="Contacts" Margin="5,63,0,10" BorderThickness="0" Grid.Column="0" MouseDoubleClick="Contacts_Click"/>
+		<Button x:Name="DeleteBtn" Content="Delete" Grid.Column="1" HorizontalAlignment="Right" Margin="0,0,148,10" VerticalAlignment="Bottom" Width="74" FontSize="20" Click="DeleteBtn_Click"/>
+		<Label Grid.Column="0" Content="Список контактов:" Margin="5,8,0,0" VerticalAlignment="Top" FontSize="36" FontWeight="Bold" FontFamily="Monotype Corsiva"/>
+		<ScrollViewer x:Name="Info" Grid.Column="1" Margin="0,5,5,50" Focusable="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch">
+			<StackPanel>
 				<GroupBox x:Name="GName" Header="Имя*" FontSize="14" VerticalAlignment="Top" Margin="0">
 					<TextBox x:Name="Name" Margin="0" TextWrapping="Wrap" VerticalAlignment="Top" UndoLimit="60"/>
 				</GroupBox>
@@ -40,7 +40,7 @@
 					<TextBox x:Name="NickName" Margin="0" TextWrapping="Wrap" UndoLimit="60"/>
 				</GroupBox>
 				<GroupBox x:Name="GBDay" Header="Дата рождения*" VerticalAlignment="Top" FontSize="14">
-					<DatePicker x:Name="BDay" Margin="0" SelectedDateFormat="Short" PreviewKeyUp="BDay_PreviewKeyUp"/>
+					<DatePicker x:Name="BDay" Margin="0" SelectedDateFormat="Short" Focusable="False"/>
 				</GroupBox>
 				<GroupBox x:Name="GEmails" Header="E-Mails" VerticalAlignment="Top" FontSize="14">
 					<Grid x:Name="GEmail" Margin="0">
@@ -64,6 +64,6 @@
 					<TextBox x:Name="Note" Margin="0" TextWrapping="Wrap"  AcceptsReturn="True"/>
 				</GroupBox>
 			</StackPanel>
-        </ScrollViewer>
-    </Grid>
+		</ScrollViewer>
+	</Grid>
 </Window>
